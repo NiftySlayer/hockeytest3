@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { CsvReader } from './CsvReader2.js';
 import GameFilter from './components/GameFilter.jsx'; // Import the GameFilter component
 import GameSelector from './components/GameSelector.jsx'; // Import the GameSelector component
+import CustomTooltip from './components/CustomTooltip.jsx';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {
@@ -124,7 +125,7 @@ function App() {
     const period = filterOptions.period === "" ? null : filterOptions.period;
     const player = filterOptions.player === "" ? null : filterOptions.player;
 
-    debugger
+   
     filteredData = filteredForGameData.filter(filteredForGameData => {
       return (
         (!event || filteredForGameData.Event === event) &&
@@ -229,10 +230,10 @@ function App() {
           <CartesianGrid></CartesianGrid>
           <XAxis axisLine={false} tick={false} type="number" dataKey="xcoord" name="xcoord" domain={[0, 200]}></XAxis>
           <YAxis axisLine={false} tick={false} type="number" dataKey="ycoord" name="ycoord" domain={[0, 85]}></YAxis>
-          <Tooltip></Tooltip>
+          <Tooltip content={<CustomTooltip />}></Tooltip>
 
-          <Scatter data={dataForPlot}>
-            {dataForPlot.map((entry, index) => (
+          <Scatter data={dataChris}>
+            {dataChris.map((entry, index) => (
               <Cell key={`${index}`} fill={entry.color} />
             ))}
           </Scatter>
