@@ -17,19 +17,19 @@ import {
   Cell,
 } from "recharts";
 
-const dataChris = [
+// const dataChris = [
 
-  {
-    color: "red",
-    xcoord: 150,
-    ycoord: 70
-  },
-  {
-    color: "blue",
-    xcoord: 80,
-    ycoord: 49
-  },
-]
+//   {
+//     color: "red",
+//     xcoord: 150,
+//     ycoord: 70
+//   },
+//   {
+//     color: "blue",
+//     xcoord: 80,
+//     ycoord: 49
+//   },
+// ]
 
 
 function App() {
@@ -63,7 +63,7 @@ function App() {
   //let players = [];
   //let periods = [];
   const [dataForPlot, setDataForPlot] = useState([]); //initialize data for the scatterplot
-  const [filteredData, setFilteredData] = useState([]);
+  // Remove unused filteredData state
   //let homeTeam = "";
   //let awayTeam = "";
 
@@ -73,7 +73,7 @@ function App() {
   const [filterFlag, setFilterFlag] = useState("true");  //used to trigger effect
 
   const [gameOption, setGameOption] = useState("");
-  const [gameFlag, setGameFlag] = useState("false");  //used to trigger effect
+  // Remove unused gameFlag and setGameFlag
 
   const [teams, setTeams] = useState([]);
   const [events, setEvents] = useState([]);
@@ -89,6 +89,14 @@ function App() {
 
   // Run when Game has been chosen
   useEffect(() => {
+    // reset the data for when a new game is selected
+    setDataForPlot([]);
+    setHomeTeam("");
+    setAwayTeam("");
+    setTeams([]);
+    setEvents([]);
+    setPeriods([]);
+    setPlayers([]);
 
     console.log("In useEffect1. GameOption is: " + gameOption);
 
@@ -98,35 +106,35 @@ function App() {
       return;
     }
 
-    for (let i = 0; i < fullData.length; i++) {
-      if (fullData[i].game_date === gameOption) {
-        filteredForGameData.push(fullData[i]);
-      }
-    }
-    // get rid of duplicates in the filteredForGameData array
-    setFilteredForGameData(filteredData => [...new Set(filteredData)]);
+    // Use filter instead of mutating array
+    const filteredGameData = fullData.filter(item => item.game_date === gameOption);
+    setFilteredForGameData(filteredGameData);
 
-
-    // filter the full data set for this game only
-    //filteredForGameData = fullData.filter(fullData => fullData.game_date === gameOption);
-    // setFilteredForGameData([fullData.filter(x => x.game_date === gameOption)]);
-    // debugger
-    setFilterOptions({ event: "", team: "", period: "", player: "" }); //reset the filter items when a game changes
+    // Reset filter options when a game changes
+    setFilterOptions({ event: "", team: "", period: "", player: "" });
     setFilterFlag("false"); //reset the filter flag to indicate no filters have been applied
-    // setGameFlag("false"); //reset the game flag
-    // //setPeriods([]);
 
-    // set the values for the filter menus
-    setEvents([...new Set(filteredForGameData.map(item => item.Event))])
-    setTeams([...new Set(filteredForGameData.map(item => item.Team))]);
-    setPeriods([...new Set(filteredForGameData.map(item => item.Period))])
-    setPlayers([...new Set(filteredForGameData.map(item => item.Player))])
-    setHomeTeam([...new Set(filteredForGameData.map(item => item["Home Team"]))])
-    setAwayTeam([...new Set(filteredForGameData.map(item => item["Away Team"]))])
+    // Set the values for the filter menus and teams
+    const eventsSet = new Set(filteredGameData.map(item => item.Event));
+    const teamsSet = new Set(filteredGameData.map(item => item.Team));
+    const periodsSet = new Set(filteredGameData.map(item => item.Period));
+    const playersSet = new Set(filteredGameData.map(item => item.Player));
+    const homeTeamArr = [...new Set(filteredGameData.map(item => item["Home Team"]))];
+    const awayTeamArr = [...new Set(filteredGameData.map(item => item["Away Team"]))];
 
-  }, [gameOption]);
+    setEvents([...eventsSet]);
+    setTeams([...teamsSet]);
+    setPeriods([...periodsSet]);
+    setPlayers([...playersSet]);
+    setHomeTeam(homeTeamArr.length > 0 ? homeTeamArr[0] : "");
+    setAwayTeam(awayTeamArr.length > 0 ? awayTeamArr[0] : "");
 
-  
+    console.log(`homeTeam after set: ${homeTeamArr.length > 0 ? homeTeamArr[0] : ""}`);
+    console.log(`awayTeam after set: ${awayTeamArr.length > 0 ? awayTeamArr[0] : ""}`);
+
+  }, [gameOption, fullData]);
+
+
 
 
   // This is where all the filtering takes place
@@ -151,8 +159,6 @@ function App() {
         (!player || filteredForGameData.Player === player));
     });
 
-    setFilteredData(filtered);
-
     //Grab the x and y coordinates from the filtered data and put them in the data array
     const plotData = filtered.map(item => ({
       player: item.Player,
@@ -163,52 +169,37 @@ function App() {
 
     setDataForPlot(plotData);
 
-    // Adjust x coordinates for changeing sides, and by home and away
+    // Adjust x coordinates for changing sides, and by home and away
     function adjustXcoordinate(team, period, xcoord, event, hometeam) {
-
       // Add jitter to X coordinates for faceoffs
       const jitterAmount = 3 * Math.random();
       const jitter = ((event === "Faceoff Win") ? jitterAmount : 0);
 
       if (team === hometeam) {
-
         if (!(period % 2 === 1)) {
-
           return (200 - xcoord - jitter);
-        }
-        else {
+        } else {
           return xcoord - jitter;
         }
-
       } else {
-
         if ((period % 2 === 1)) {
-
           return 200 - xcoord - jitter;
-        }
-        else {
+        } else {
           return xcoord - jitter;
         }
       }
-
     }
 
     // Add jitter to Y coordinates for faceoffs
     function adjustYcoordinate(ycoord, event) {
-      const jitterAmount = 3 * Math.random();;
+      const jitterAmount = 3 * Math.random();
       const jitter = ((event === "Faceoff Win") ? jitterAmount : 0);
       return ycoord - jitter;
     }
 
-    // Set the filter flag back to false after filtering
-    //setFilterFlag(false);
-
-  }, [filterFlag]);
-
-
+  }, [filterFlag, filteredForGameData, filterOptions, homeTeam, awayTeam]);
 
   return (
-
     <div>
       {/* {filteredData ? 
         filteredData.map((item, index) => (
@@ -252,8 +243,8 @@ function App() {
           <YAxis axisLine={false} tick={false} type="number" dataKey="ycoord" name="ycoord" domain={[0, 85]}></YAxis>
           <Tooltip content={<CustomTooltip />}></Tooltip>
 
-          <Scatter data={dataChris}>
-            {dataChris.map((entry, index) => (
+          <Scatter data={dataForPlot} shape="circle" fill="#8884d8">
+            {dataForPlot.map((entry, index) => (
               <Cell key={`${index}`} fill={entry.color} />
             ))}
           </Scatter>
@@ -269,8 +260,7 @@ function App() {
       <GameSelector games={games} game={gameOption} handleGameSet={setGameOption} />
       <GameFilter events={events} teams={teams} periods={periods} players={players} handleFilterSet={setFilterOptions} handleSetFilterFlag={setFilterFlag} />
     </div>
-
-  )
+  );
 }
 
 export default App;
