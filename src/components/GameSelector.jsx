@@ -6,7 +6,7 @@ function GameSelector({ games, game, handleGameSet }) {
             <select
                 className="selectFilter"
                 defaultValue={game}
-                onChange={(e) => { handleGameSet(e.target.value) }}>
+                onChange={(e) => { handleGameSet(e.target.value); console.log("Game Selected: ", game)}}>
                 <option value="" disabled>
                     Choose a game
                 </option>

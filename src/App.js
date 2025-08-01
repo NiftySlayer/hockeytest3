@@ -17,10 +17,6 @@ import {
   Cell,
 } from "recharts";
 
-
-
-
-
 const dataChris = [
 
   {
@@ -36,12 +32,7 @@ const dataChris = [
 ]
 
 
-
-//let filteredForGameData = [];
-
 function App() {
-
-  // const fullData = await CsvReader(); // get all the data from test file
 
   // retrieve the data asynchronously from the CSV file once when the component mounts
   const [fullData, setFullData] = useState([]);
@@ -58,18 +49,19 @@ function App() {
 
     fetchData().then((data) => {
       setGames([...new Set(data.map(item => item.game_date))]);
+      setFullData(data);
     });
   }, []);
 
   let filteredForGameData = [];
-  let events = [];
-  let teams = [];
-  let players = [];
-  let periods = [];
+  //let events = [];
+  //let teams = [];
+  //let players = [];
+  //let periods = [];
   let dataForPlot = []; //initialize data for the scatterplot
   let filteredData = [];
-  let homeTeam ="";
-  let awayTeam ="";
+  //let homeTeam = "";
+  //let awayTeam = "";
 
 
   // App state variables
@@ -79,38 +71,41 @@ function App() {
   const [gameOption, setGameOption] = useState("");
   const [gameFlag, setGameFlag] = useState("false");  //used to trigger effect
 
-  // const [homeTeam, setHomeTeam] = useState("");
-  // const [awayTeam, setAwayTeam] = useState("");
+  const [teams, setTeams] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [periods, setPeriods] = useState([]);
+  const [players, setPlayers] = useState([]);
+
+  const [homeTeam, setHomeTeam] = useState("");
+  const [awayTeam, setAwayTeam] = useState("");
 
   //const [filteredForGameData, setFilteredForGameData] = useState([]);
-
-  //const [periods, setPeriods] = useState([]);
-
 
 
 
   // Run when Game has been chosen
   useEffect(() => {
+
+    console.log("In useEffect1. GameOption is: " + gameOption);
+
     // filter the full data set for this game only
-    filteredForGameData = fullData.filter(fullData => fullData.game_date === gameOption.game);
-
-    // Set the home and away teams once a game has been chosen
-    // if (!filteredForGameData.length === 0) {
-    //   homeTeam = (filteredForGameData[0]["Home Team"]);
-    //   awayTeam = (filteredForGameData[0]["Away Team"]);
-    // };
-
+    filteredForGameData = fullData.filter(fullData => fullData.game_date === gameOption);
+    //setFilteredForGameData(fullData.filter(x => x.game_date === gameOption));
+    
     setFilterOptions({ event: "", team: "", period: "", player: "" }); //reset the filter items when a game changes
-    // setFilterFlag("false"); //reset the filter flag to indicate no filters have been applied
+    setFilterFlag("false"); //reset the filter flag to indicate no filters have been applied
     // setGameFlag("false"); //reset the game flag
     // //setPeriods([]);
 
-    events = [new Set(filteredForGameData.map(item => item.Event))];
-    teams = [new Set(filteredForGameData.map(item => item.Team))];
-    periods = [new Set(filteredForGameData.map(item => item.Period))];
-    players = [new Set(filteredForGameData.map(item => item.Player))];
+    // set the values for the filter menus
+    setEvents([...new Set(filteredForGameData.map(item => item.Event))])
+    setTeams([...new Set(filteredForGameData.map(item => item.Team))]);
+    setPeriods([...new Set(filteredForGameData.map(item => item.Period))])
+    setPlayers([...new Set(filteredForGameData.map(item => item.Player))])
+    setHomeTeam([...new Set(filteredForGameData.map(item => item["Home Team"]))])
+    setAwayTeam([...new Set(filteredForGameData.map(item => item["Away Team"]))])
 
-  }, [gameOption]);
+  }, [gameOption, fullData]);
 
 
 
@@ -123,11 +118,13 @@ function App() {
       return;
     }
 
+   
     const event = filterOptions.event === "" ? null : filterOptions.event;
     const team = filterOptions.team === "" ? null : filterOptions.team;
     const period = filterOptions.period === "" ? null : filterOptions.period;
     const player = filterOptions.player === "" ? null : filterOptions.player;
 
+    debugger
     filteredData = filteredForGameData.filter(filteredForGameData => {
       return (
         (!event || filteredForGameData.Event === event) &&
@@ -135,7 +132,6 @@ function App() {
         (!period || filteredForGameData.Period === period) &&
         (!player || filteredForGameData.Player === player));
     });
-
 
 
     //Grab the x and y coordinates from the filtered data and put them in the data array
@@ -184,7 +180,7 @@ function App() {
     }
 
     // Set the filter flag back to false after filtering
-    setFilterFlag(false);
+    //setFilterFlag(false);
 
   }, [filterFlag]);
 
@@ -209,8 +205,8 @@ function App() {
 
       <div>
 
-        <p style={{ color: "blue", marginLeft: "60px" }}>Home Team: </p>
-        <p style={{ color: "red", marginLeft: "60px" }}>Away Team: </p>
+        <p style={{ color: "blue", marginLeft: "60px" }}>Home Team: {homeTeam}</p>
+        <p style={{ color: "red", marginLeft: "60px" }}>Away Team: {awayTeam}</p>
       </div>
 
       <div

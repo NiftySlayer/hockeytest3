@@ -9,9 +9,9 @@ export async function CsvReader() {
         let csvString = '';
         let done = false;
 
-        // Read all chunks from the stream
+        // Read all chunks from the stream until its done
         while (!done) {
-            const { value, done: streamDone } = await reader.read();
+            const { value, done: streamDone } = await reader.read(); //aliasing, extracts property named done, but assigns ne variable named streamDone
             if (value) {
                 csvString += decoder.decode(value);
             }

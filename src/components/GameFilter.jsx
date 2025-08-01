@@ -23,17 +23,21 @@ function GameFilter({ events, teams, periods, players, handleFilterSet, handleSe
     return (
         <div className="game-filter">
 
-            <select className="selectFilter" value={selectedEvent} onChange={(e) => { setSelectedEvent(e.target.value) }}>
+            <select className="selectFilter" value={selectedEvent} multiple={false} onChange={(e) => { setSelectedEvent(e.target.value) }}>
                 <option value="">All Events</option>
                 {events.map((event, index) => (
-                    <option key={index} value={event}>{event}</option>
+                    <option key={index} value={event}>
+                        {event}
+                    </option>
                 ))}
             </select>
 
-            <select className="selectFilter" value={selectedTeam} onChange={(e) => { setSelectedTeam(e.target.value) }}>
+            <select className="selectFilter" value={selectedTeam} multiple={false} onChange={(e) => { setSelectedTeam(e.target.value) }}>
                 <option value="">All Teams</option>
                 {teams.map((team, index) => (
-                    <option key={index} value={team}>{team}</option>
+                    <option key={index} value={team}>
+                        {team}
+                    </option>
                 ))}
             </select>
 
@@ -44,7 +48,7 @@ function GameFilter({ events, teams, periods, players, handleFilterSet, handleSe
                 ))}
             </select>
 
-            <select className="selectFilter" value={selectedPlayer} onChange={(e) => { setSelectedPlayer(e.target.value)}}>
+            <select className="selectFilter" value={selectedPlayer} onChange={(e) => { setSelectedPlayer(e.target.value) }}>
                 <option value="">All Players</option>
                 {players.map((player, index) => (
                     <option key={index} value={player}>{player}</option>
