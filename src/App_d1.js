@@ -51,10 +51,6 @@ function App() {
     fetchData().then((data) => {
       setGames([...new Set(data.map(item => item.game_date))]);
       setFullData(data);
-      // print the number of dimensions in the data array
-      // console.log("Number of dimensions in the data array: " + Object.keys(data[0]).length);
-      // console.log("Number of games in the data array: " + games.length);
-      // console.log("Number of rows in the data array: " + data.length);
     });
   }, []);
 
@@ -85,7 +81,6 @@ function App() {
   const [awayTeam, setAwayTeam] = useState("");
 
   const [filteredForGameData, setFilteredForGameData] = useState([]);
-  
 
 
 
@@ -94,25 +89,10 @@ function App() {
 
     console.log("In useEffect1. GameOption is: " + gameOption);
 
-    // filter the full data set for the selected gameOption
-    if (gameOption === "") {
-      setFilteredForGameData([]); // reset filtered data if no game is selected
-      return;
-    }
-
-    for (let i = 0; i < fullData.length; i++) {
-      if (fullData[i].game_date === gameOption) {
-        filteredForGameData.push(fullData[i]);
-      }
-    }
-    // get rid of duplicates in the filteredForGameData array
-    setFilteredForGameData(tempFiltered => [...new Set(tempFiltered)]);
-
-   
     // filter the full data set for this game only
     //filteredForGameData = fullData.filter(fullData => fullData.game_date === gameOption);
-    // setFilteredForGameData([fullData.filter(x => x.game_date === gameOption)]);
-    // debugger
+    setFilteredForGameData(fullData.filter(x => x.game_date === gameOption));
+    debugger
     setFilterOptions({ event: "", team: "", period: "", player: "" }); //reset the filter items when a game changes
     setFilterFlag("false"); //reset the filter flag to indicate no filters have been applied
     // setGameFlag("false"); //reset the game flag

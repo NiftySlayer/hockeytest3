@@ -22,6 +22,8 @@ export async function CsvReader() {
         return new Promise((resolve, reject) => {
             Papa.parse(csvString, {
                 header: true,
+                skipEmptyLines: true,
+                transformHeader: (header) => header.trim(), // Trim whitespace from headers
                 complete: (results) => {
                     resolve(results.data);
                 },
