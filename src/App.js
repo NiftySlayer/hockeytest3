@@ -1,4 +1,3 @@
-
 import './App.css';
 import backgroundImage from './assets/rink_coords6.png'
 import { useEffect, useState } from 'react';
@@ -63,8 +62,8 @@ function App() {
   //let teams = [];
   //let players = [];
   //let periods = [];
-  let dataForPlot = []; //initialize data for the scatterplot
-  let filteredData = [];
+  const [dataForPlot, setDataForPlot] = useState([]); //initialize data for the scatterplot
+  const [filteredData, setFilteredData] = useState([]);
   //let homeTeam = "";
   //let awayTeam = "";
 
@@ -85,7 +84,6 @@ function App() {
   const [awayTeam, setAwayTeam] = useState("");
 
   const [filteredForGameData, setFilteredForGameData] = useState([]);
-  
 
 
 
@@ -106,9 +104,9 @@ function App() {
       }
     }
     // get rid of duplicates in the filteredForGameData array
-    setFilteredForGameData(tempFiltered => [...new Set(tempFiltered)]);
+    setFilteredForGameData(filteredData => [...new Set(filteredData)]);
 
-   
+
     // filter the full data set for this game only
     //filteredForGameData = fullData.filter(fullData => fullData.game_date === gameOption);
     // setFilteredForGameData([fullData.filter(x => x.game_date === gameOption)]);
@@ -128,6 +126,7 @@ function App() {
 
   }, [gameOption]);
 
+  
 
 
   // This is where all the filtering takes place
@@ -139,14 +138,12 @@ function App() {
       return;
     }
 
-   
     const event = filterOptions.event === "" ? null : filterOptions.event;
     const team = filterOptions.team === "" ? null : filterOptions.team;
     const period = filterOptions.period === "" ? null : filterOptions.period;
     const player = filterOptions.player === "" ? null : filterOptions.player;
 
-   
-    filteredData = filteredForGameData.filter(filteredForGameData => {
+    const filtered = filteredForGameData.filter(filteredForGameData => {
       return (
         (!event || filteredForGameData.Event === event) &&
         (!team || filteredForGameData.Team === team) &&
@@ -154,14 +151,17 @@ function App() {
         (!player || filteredForGameData.Player === player));
     });
 
+    setFilteredData(filtered);
 
     //Grab the x and y coordinates from the filtered data and put them in the data array
-    dataForPlot = filteredData.map(item => ({
+    const plotData = filtered.map(item => ({
       player: item.Player,
       color: ((item.Team === homeTeam) ? "blue" : "red"),
       xcoord: adjustXcoordinate(item.Team, item.Period, Number(item["X Coordinate"]), item.Event, homeTeam),
       ycoord: adjustYcoordinate(Number(item["Y Coordinate"]), item.Event),
     }));
+
+    setDataForPlot(plotData);
 
     // Adjust x coordinates for changeing sides, and by home and away
     function adjustXcoordinate(team, period, xcoord, event, hometeam) {
