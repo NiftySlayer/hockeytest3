@@ -17,19 +17,6 @@ import {
   Cell,
 } from "recharts";
 
-// const dataChris = [
-
-//   {
-//     color: "red",
-//     xcoord: 150,
-//     ycoord: 70
-//   },
-//   {
-//     color: "blue",
-//     xcoord: 80,
-//     ycoord: 49
-//   },
-// ]
 
 
 function App() {
