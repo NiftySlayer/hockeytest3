@@ -284,7 +284,7 @@ function App() {
       {/*<GameFilter games={games} events={events} teams={teams} periods={periods} players={players} handleFilterSet={setFilterOptions} /> */}
       <GameSelector games={games} game={gameOption} handleGameSet={setGameOption} />
       <GameFilter events={events} teams={teams} periods={periods} players={players} handleFilterSet={setFilterOptions} handleSetFilterFlag={setFilterFlag} />
-      <OutputTable />
+      {/*<OutputTable outputData={filtered}/> */}
     </div>
   );
 }

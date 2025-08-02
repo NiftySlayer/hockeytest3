@@ -1,17 +1,32 @@
 import React from 'react';
 
-function OutputTable() {
-  const data1 = [
-    { name: 'Alice', age: 30, city: 'New York' },
-    { name: 'Bob', age: 24, city: 'London' },
-    { name: 'Charlie', age: 35, city: 'Paris' },
-  ];
+function OutputTable(outputData) {
+  
+
+  if (!Array.isArray(outputData)){
+    return <p>Data is not an array</p>
+  }
+    
+    
+
+  console.log("outputData");
+  console.log(outputData);
+
+
+  const data1 = outputData;
+  
+  // const data1 = [
+  //   { name: 'Alice', age: 30, city: 'New York' },
+  //   { name: 'Bob', age: 24, city: 'London' },
+  //   { name: 'Charlie', age: 35, city: 'Paris' },
+  // ];
 
   console.log("In the table code");
   //console.log(outputData);
 
   // Extract column headers from the first data object
   const columns = Object.keys(data1[0] || {});
+
 
   return (
     <div>

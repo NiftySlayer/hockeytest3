@@ -24,7 +24,8 @@ function GameFilter({ events, teams, periods, players, handleFilterSet, handleSe
     return (
         <div className="game-filter">
             <h5>Filter Options:</h5>
-            <select className="selectFilter" value={selectedEvent} multiple={false} onChange={(e) => { setSelectedEvent(e.target.value) }}>
+
+            <select id="sellEv" className="selectFilter" value={selectedEvent} multiple={false} onChange={(e) => { setSelectedEvent(e.target.value) }}>
                 <option value="">All Events</option>
                 {events.map((event, index) => (
                     <option key={index} value={event}>
