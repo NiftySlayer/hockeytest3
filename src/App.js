@@ -252,7 +252,7 @@ function App() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          background: "beige",
+          background: "white",
           backgroundImage: `url(${backgroundImage})`,
           backgroundPosition: "58px 5px",
           backgroundSize: '92%',
