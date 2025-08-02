@@ -16,6 +16,7 @@ import {
   ScatterChart,
   Cell,
 } from "recharts";
+import OutputTable from './components/OutputTable.jsx';
 
 
 
@@ -40,8 +41,6 @@ function App() {
       setFullData(data);
     });
   }, []);
-
-
 
   // App state variables
   const [filterOptions, setFilterOptions] = useState({ event: " ", team: " ", period: " ", player: " " });
@@ -68,7 +67,7 @@ function App() {
     setEvents([]);
     setPeriods([]);
     setPlayers([]);
-    setFilteredForGameData([]); //chris
+    setFilteredForGameData([]);
 
     // Reset filter options when a game changes
     setFilterOptions({ event: "", team: "", period: "", player: "" }); /// ****** This is not working
@@ -77,8 +76,6 @@ function App() {
     console.log("Top of effect2:");
     console.log("event: " + filterOptions.event);
     console.log("team: " + filterOptions.team);
-
-
     console.log("In useEffect1. GameOption is: " + gameOption);
 
     // filter the full data set for the selected gameOption
@@ -120,11 +117,7 @@ function App() {
     console.log(`homeTeam after set: ${homeTeamArr.length > 0 ? homeTeamArr[0] : ""}`);
     console.log(`awayTeam after set: ${awayTeamArr.length > 0 ? awayTeamArr[0] : ""}`);
 
-
-
   }, [gameOption, fullData]);
-
-
 
 
   // ***  useEffect # 3 - Filter the game data for final plot points
@@ -139,7 +132,6 @@ function App() {
 
     console.log(" ");
     console.log("*********** New Filter************");
-
 
     // Get the user choices from select menues, use all in category if no choice
     const event = filterOptions.event === "" ? null : filterOptions.event;
@@ -199,10 +191,11 @@ function App() {
       ycoord: adjustYcoordinate(Number(item["Y Coordinate"]), item.Event),
     }));
 
-    setDataForPlot(plotData);
+    setDataForPlot(plotData); //set the plot points
 
     // Adjust x coordinates for changing sides, and by home and away
     function adjustXcoordinate(team, period, xcoord, event, hometeam) {
+
       // Add jitter to X coordinates for faceoffs
       const jitterAmount = 5 * Math.random();
       const jitter = ((event === "Faceoff Win") ? jitterAmount : 0);
@@ -291,6 +284,7 @@ function App() {
       {/*<GameFilter games={games} events={events} teams={teams} periods={periods} players={players} handleFilterSet={setFilterOptions} /> */}
       <GameSelector games={games} game={gameOption} handleGameSet={setGameOption} />
       <GameFilter events={events} teams={teams} periods={periods} players={players} handleFilterSet={setFilterOptions} handleSetFilterFlag={setFilterFlag} />
+      <OutputTable />
     </div>
   );
 }
