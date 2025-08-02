@@ -17,12 +17,12 @@ function GameFilter({ events, teams, periods, players, handleFilterSet, handleSe
             player: selectedPlayer
         });
 
-        handleSetFilterFlag(true); // Set the filter flag to true to indicate that a filter has been applied
+        handleSetFilterFlag("true"); // Set the filter flag to true to indicate that a filter has been applied
     };
 
     return (
         <div className="game-filter">
-
+            <h5>Filter Options:</h5>
             <select className="selectFilter" value={selectedEvent} multiple={false} onChange={(e) => { setSelectedEvent(e.target.value) }}>
                 <option value="">All Events</option>
                 {events.map((event, index) => (

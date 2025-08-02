@@ -5,6 +5,7 @@ import { CsvReader } from './CsvReader2.js';
 import GameFilter from './components/GameFilter.jsx'; // Import the GameFilter component
 import GameSelector from './components/GameSelector.jsx'; // Import the GameSelector component
 import CustomTooltip from './components/CustomTooltip.jsx';
+import OutputTable from './components/OutputTable.jsx';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {
@@ -25,6 +26,7 @@ function App() {
   const [fullData, setFullData] = useState([]);
   const [games, setGames] = useState([]);
 
+
   // useEffect #1 -- Fetch data on mount
   useEffect(() => {
     const fetchData = async () => {
@@ -38,14 +40,16 @@ function App() {
     fetchData().then((data) => {
       setGames([...new Set(data.map(item => item.game_date))]);
       setFullData(data);
+      // print the number of dimensions in the data array
+      // console.log("Number of dimensions in the data array: " + Object.keys(data[0]).length);
+      // console.log("Number of games in the data array: " + games.length);
+      // console.log("Number of rows in the data array: " + data.length);
     });
   }, []);
 
-
-
   // App state variables
-  const [filterOptions, setFilterOptions] = useState({ event: " ", team: " ", period: " ", player: " " });
-  const [filterFlag, setFilterFlag] = useState("false");
+  const [filterOptions, setFilterOptions] = useState({ event: "", team: "", period: "", player: "" });
+  const [filterFlag, setFilterFlag] = useState("false");  //used to trigger effect
   const [gameOption, setGameOption] = useState("");
   const [teams, setTeams] = useState([]);
   const [events, setEvents] = useState([]);
@@ -55,8 +59,7 @@ function App() {
   const [awayTeam, setAwayTeam] = useState("");
   const [filteredForGameData, setFilteredForGameData] = useState([]);
   const [filtered, setFiltered] = useState([]);
-  const [dataForPlot, setDataForPlot] = useState([]); //initialize data for the scatterplot
-
+  const [dataForPlot, setDataForPlot] = useState([]);
 
   // ***  useEffect #2 -- Run when Game has been chosen
   useEffect(() => {
@@ -68,16 +71,6 @@ function App() {
     setEvents([]);
     setPeriods([]);
     setPlayers([]);
-    setFilteredForGameData([]); //chris
-
-    // Reset filter options when a game changes
-    setFilterOptions({ event: "", team: "", period: "", player: "" }); /// ****** This is not working
-    setFilterFlag("false"); //reset the filter flag to indicate no filters have been applied
-
-    console.log("Top of effect2:");
-    console.log("event: " + filterOptions.event);
-    console.log("team: " + filterOptions.team);
-
 
     console.log("In useEffect1. GameOption is: " + gameOption);
 
@@ -90,6 +83,10 @@ function App() {
     // Use filter instead of mutating array
     const filteredGameData = fullData.filter(item => item.game_date === gameOption);
     setFilteredForGameData(filteredGameData);
+
+    // Reset filter options when a game changes
+    setFilterOptions({ event: "", team: "", period: "", player: "" });
+    setFilterFlag("false"); //reset the filter flag to indicate no filters have been applied
 
     // Set the values for the filter menus and teams
     const eventsSet = new Set(filteredGameData.map(item => item.Event));
@@ -106,25 +103,10 @@ function App() {
     setHomeTeam(homeTeamArr.length > 0 ? homeTeamArr[0] : "");
     setAwayTeam(awayTeamArr.length > 0 ? awayTeamArr[0] : "");
 
-    console.log("");
-    console.log(" ********* New Date Game ********");
-    console.log("filterOptions in effect1:")
-    console.log(filterOptions);
-    console.log("Teams after I changed date");
-    console.log("Teamset:")
-    console.log(teamsSet);
-
-    console.log("teams:")
-    console.log(teams);
-
     console.log(`homeTeam after set: ${homeTeamArr.length > 0 ? homeTeamArr[0] : ""}`);
     console.log(`awayTeam after set: ${awayTeamArr.length > 0 ? awayTeamArr[0] : ""}`);
 
-
-
   }, [gameOption, fullData]);
-
-
 
 
   // ***  useEffect # 3 - Filter the game data for final plot points
@@ -132,14 +114,11 @@ function App() {
 
     // If filterFlag is false, do not filter
     if ((filterFlag === "false")) {
+      console.log("Inside of exit:" + !filterFlag);
       return;
     }
 
     setFiltered([]); // clear out the filtered data before creating new
-
-    console.log(" ");
-    console.log("*********** New Filter************");
-
 
     // Get the user choices from select menues, use all in category if no choice
     const event = filterOptions.event === "" ? null : filterOptions.event;
@@ -147,13 +126,7 @@ function App() {
     const period = filterOptions.period === "" ? null : filterOptions.period;
     const player = filterOptions.player === "" ? null : filterOptions.player;
 
-    console.log("filterOptions in effect2:")
-    console.log(filterOptions);
-    console.log("event:" + event);
-    console.log("team:" + team);
-    console.log("period:" + period);
-    console.log("player:" + player);
-
+    // Use the game filtered array to further filter for chosen categories
     const filtered = filteredForGameData.filter(filteredForGameData => {
       return (
         (!event || filteredForGameData.Event === event) &&
@@ -162,50 +135,21 @@ function App() {
         (!player || filteredForGameData.Player === player));
     });
 
-
-    // setFiltered(filteredForGameData.filter(filteredForGameData => {
-    //   return (
-    //     (!event || filteredForGameData.Event === event) &&
-    //     (!team || filteredForGameData.Team === team) &&
-    //     (!period || filteredForGameData.Period === period) &&
-    //     (!player || filteredForGameData.Player === player));
-    // }));
-
-    console.log("filteredForGameData:");
-    console.log(filteredForGameData);
-
-    console.log("filtered data");
-    console.log(filtered);
-
-    // Use the game filtered array to further filter for chosen categories
-    // const filtered = filteredForGameData.filter(filteredForGameData => {
-    //   return (
-    //     (!event || filteredForGameData.Event === event) &&
-    //     (!team || filteredForGameData.Team === team) &&
-    //     (!period || filteredForGameData.Period === period) &&
-    //     (!player || filteredForGameData.Player === player));
-    // });
-
-    //Grab the x and y coordinates from the filtered data and put them in the data array
+    //  Grab the x and y coordinates from the filtered data and put them in the plot data
     const plotData = filtered.map(item => ({
       player: item.Player,
-      event: item.Event,
-      detail1: item["Detail 1"],
-      detail2: item["Detail 2"],
-      detail3: item["Detail 3"],
-      detail4: item["Detail 4"],
       color: ((item.Team === homeTeam) ? "blue" : "red"),
       xcoord: adjustXcoordinate(item.Team, item.Period, Number(item["X Coordinate"]), item.Event, homeTeam),
       ycoord: adjustYcoordinate(Number(item["Y Coordinate"]), item.Event),
     }));
 
-    setDataForPlot(plotData);
+    setDataForPlot(plotData); //Set the plot points
 
     // Adjust x coordinates for changing sides, and by home and away
     function adjustXcoordinate(team, period, xcoord, event, hometeam) {
       // Add jitter to X coordinates for faceoffs
-      const jitterAmount = 5 * Math.random();
-      const jitter = ((event === "Faceoff Win") ? jitterAmount : 0);
+      const jitterAmount = 3 * Math.random();
+      const jitter = ((event === "Faceoff Win") ? jitterAmount : 0); // Add some jitter to faceoffs
 
       if (team === hometeam) {
         if (!(period % 2 === 1)) {
@@ -224,12 +168,12 @@ function App() {
 
     // Add jitter to Y coordinates for faceoffs
     function adjustYcoordinate(ycoord, event) {
-      const jitterAmount = 5 * Math.random();
+      const jitterAmount = 3 * Math.random();
       const jitter = ((event === "Faceoff Win") ? jitterAmount : 0);
       return ycoord - jitter;
     }
 
-  }, [filterFlag, filterOptions, homeTeam, awayTeam]);
+  }, [filterFlag, filteredForGameData, filterOptions, homeTeam, awayTeam]);
 
   return (
     <div>
@@ -248,7 +192,6 @@ function App() {
 
 
       <div>
-
         <p style={{ color: "blue", marginLeft: "60px" }}>Home Team: {homeTeam}</p>
         <p style={{ color: "red", marginLeft: "60px" }}>Away Team: {awayTeam}</p>
       </div>
@@ -259,7 +202,7 @@ function App() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          background: "beige",
+          
           backgroundImage: `url(${backgroundImage})`,
           backgroundPosition: "58px 5px",
           backgroundSize: '92%',
@@ -285,12 +228,35 @@ function App() {
         </ScatterChart>
       </div >
 
-      <br />
+   
       <br />
 
       {/*<GameFilter games={games} events={events} teams={teams} periods={periods} players={players} handleFilterSet={setFilterOptions} /> */}
       <GameSelector games={games} game={gameOption} handleGameSet={setGameOption} />
       <GameFilter events={events} teams={teams} periods={periods} players={players} handleFilterSet={setFilterOptions} handleSetFilterFlag={setFilterFlag} />
+      <OutputTable outputData={filtered} /> 
+      <div> Hello
+
+
+        {/*{filtered ?
+          filtered.map((item, index) => (
+            <div key={index}>
+              <p>Game Date: {item.game_date}</p>
+              <p>Event: {item.Event}</p>
+              <p>Team: {item.Team}</p>
+              <p>Period: {item.Period}</p>
+              <p>Player: {item.Player}</p>
+            </div>
+          ))
+          : <p>No data available</p>
+        } */}
+
+
+
+
+
+
+      </div>
     </div>
   );
 }

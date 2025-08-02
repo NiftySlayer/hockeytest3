@@ -1,12 +1,11 @@
-import { useState } from "react";
-
 function GameSelector({ games, game, handleGameSet }) {
     return (
         <div className="game-filter">
+            <label className="gameMenu">  Choose Game  </label>
             <select
                 className="selectFilter"
                 defaultValue={game}
-                onChange={(e) => { handleGameSet(e.target.value); console.log("Game Selected: ", game)}}>
+                onChange={(e) => { handleGameSet(e.target.value);}}>
                 <option value="" disabled>
                     Choose a game
                 </option>
@@ -16,6 +15,8 @@ function GameSelector({ games, game, handleGameSet }) {
                     </option>
                 ))}
             </select>
+            <br/>
+              <br/>
         </div>
     );
 }
