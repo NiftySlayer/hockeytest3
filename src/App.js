@@ -1,7 +1,7 @@
 import './App.css';
 import backgroundImage from './assets/rink_coords6.png'
 import { useEffect, useState } from 'react';
-import { CsvReader } from './CsvReader2.js';
+import { CsvReader } from './CsvReader.js';
 import GameFilter from './components/GameFilter.jsx'; // Import the GameFilter component
 import GameSelector from './components/GameSelector.jsx'; // Import the GameSelector component
 import CustomTooltip from './components/CustomTooltip.jsx';
