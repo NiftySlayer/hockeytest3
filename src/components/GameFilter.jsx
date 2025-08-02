@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+// Handles the filtering menus
 function GameFilter({ events, teams, periods, players, handleFilterSet, handleSetFilterFlag }) {
 
     // Set state variables
@@ -56,7 +57,7 @@ function GameFilter({ events, teams, periods, players, handleFilterSet, handleSe
             </select>
 
             <div>
-                <button onClick={handleFilterChange}>Submit</button>
+                <button className="filterButton" onClick={handleFilterChange}>Submit Filters</button>
             </div>
 
         </div>
