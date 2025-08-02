@@ -5,6 +5,7 @@ import { CsvReader } from './CsvReader2.js';
 import GameFilter from './components/GameFilter.jsx'; // Import the GameFilter component
 import GameSelector from './components/GameSelector.jsx'; // Import the GameSelector component
 import CustomTooltip from './components/CustomTooltip.jsx';
+import OutputTable from './OutputTable.jsx';
 //import 'bootstrap/dist/css/bootstrap.min.css';
 
 import {
@@ -71,6 +72,7 @@ function App() {
   const [awayTeam, setAwayTeam] = useState("");
 
   const [filteredForGameData, setFilteredForGameData] = useState([]);
+  const [filtered, setFiltered] = useState([]);
 
 
 
@@ -132,19 +134,29 @@ function App() {
     if ((!filterFlag)) {
       return;
     }
+    setFiltered([]);
 
     const event = filterOptions.event === "" ? null : filterOptions.event;
     const team = filterOptions.team === "" ? null : filterOptions.team;
     const period = filterOptions.period === "" ? null : filterOptions.period;
     const player = filterOptions.player === "" ? null : filterOptions.player;
 
-    const filtered = filteredForGameData.filter(filteredForGameData => {
+    setFiltered(filteredForGameData.filter(filteredForGameData => {
       return (
         (!event || filteredForGameData.Event === event) &&
         (!team || filteredForGameData.Team === team) &&
         (!period || filteredForGameData.Period === period) &&
         (!player || filteredForGameData.Player === player));
-    });
+    }));
+
+
+    // const filtered = filteredForGameData.filter(filteredForGameData => {
+    //   return (
+    //     (!event || filteredForGameData.Event === event) &&
+    //     (!team || filteredForGameData.Team === team) &&
+    //     (!period || filteredForGameData.Period === period) &&
+    //     (!player || filteredForGameData.Player === player));
+    // });
 
     //Grab the x and y coordinates from the filtered data and put them in the data array
     const plotData = filtered.map(item => ({
@@ -203,7 +215,6 @@ function App() {
 
 
       <div>
-
         <p style={{ color: "blue", marginLeft: "60px" }}>Home Team: {homeTeam}</p>
         <p style={{ color: "red", marginLeft: "60px" }}>Away Team: {awayTeam}</p>
       </div>
@@ -246,6 +257,29 @@ function App() {
       {/*<GameFilter games={games} events={events} teams={teams} periods={periods} players={players} handleFilterSet={setFilterOptions} /> */}
       <GameSelector games={games} game={gameOption} handleGameSet={setGameOption} />
       <GameFilter events={events} teams={teams} periods={periods} players={players} handleFilterSet={setFilterOptions} handleSetFilterFlag={setFilterFlag} />
+          <OutputTable />
+      <div> Hello
+
+
+        {filtered ?
+          filtered.map((item, index) => (
+            <div key={index}>
+              <p>Game Date: {item.game_date}</p>
+              <p>Event: {item.Event}</p>
+              <p>Team: {item.Team}</p>
+              <p>Period: {item.Period}</p>
+              <p>Player: {item.Player}</p>
+            </div>
+          ))
+          : <p>No data available</p>
+        }
+
+
+
+
+
+
+      </div>
     </div>
   );
 }
